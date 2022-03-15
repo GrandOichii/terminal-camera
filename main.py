@@ -3,13 +3,15 @@ import curses
 
 win = None
 min_color, max_color = 0, 255
-h, w = 0, 0
-color_dict = dict()
 
 colors = dict()
 
 def draw(frame):
     win.erase()
+    h, w = win.getmaxyx()
+    h -= 2
+    w -= 2
+    frame = cv.resize(frame, (w, h))
     for i in range(h):
         for j in range(w):
             b, g, r = frame[i, j]
@@ -40,9 +42,6 @@ def main(stdscr):
     init_colors()
     win.nodelay(1)
     win.timeout(20)
-    h, w = win.getmaxyx()
-    h -= 2
-    w -= 2
     curses.start_color()
     curses.use_default_colors()
     curses.curs_set(0)
@@ -52,7 +51,6 @@ def main(stdscr):
     capture = cv.VideoCapture(0)
     while True:
         istrue, frame = capture.read()
-        frame = cv.resize(frame, (w, h))
         draw(frame)
         cv.waitKey(20)
         key = win.getch()
